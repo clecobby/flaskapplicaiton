@@ -1,52 +1,23 @@
-# version: 0.0
-# os: linux
-# files:
-#   - source: /home/ubuntu/flaskapplication/app
-#     destination: /home/ubuntu/flaskapplication/app
-#   - source: /home/ubuntu/flaskapplication/requirements.txt
-#     destination: /home/ubuntu/flaskapplication/
-# hooks:
-#   BeforeInstall:
-#     - location: scripts/install_dependencies
-#       timeout: 300
-#       runas: ubuntu
-#   AfterInstall:
-#     - location: scripts/start_fastapi_app
-#       timeout: 300
-#       runas: ubuntu
-#   ApplicationStop:
-#     - location: scripts/stop_fastapi_app
-#       timeout: 300
-#       runas: ubuntu
-version: 0.2
-
-phases:
-  install:
-    runtime-versions:
-      python: 3.10
-
-  pre_build:
-    commands:
-      - echo "Installing dependencies and generating SSL certificates..."
-      - pwd
-      - ls -al /home/ubuntu/
-      - ls -al /codebuild/output/src1839191887/src/
-      - cd /codebuild/output/src1839191887/src/home/ubuntu/flaskapplication/
-      - pip3 install -r requirements.txt
-      - sudo apt-get update
-      - sudo apt-get install -y openssl
-      - openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
-
-  build:
-    commands:
-      - echo "Building FastAPI application..."
-      - cd /codebuild/output/src1839191887/src/home/ubuntu/flaskapplication/app
-      - uvicorn app:app --host 0.0.0.0 --port 5000 --ssl-keyfile key.pem --ssl-certfile cert.pem
-
-  post_build:
-    commands:
-      - echo "Stopping FastAPI application..."
-      - pkill -f "uvicorn app:app --host 0.0.0.0 --port 5000"
-
-artifacts:
-  files: /home/ubuntu/flaskapplication/app/*
+version: 0.0
+os: linux
+files:
+  - source: /home/ubuntu/flaskapplication/app
+    destination: /home/ubuntu/flaskapplication/app
+  - source: /home/ubuntu/flaskapplication/requirements.txt
+    destination: /home/ubuntu/flaskapplication/
+hooks:
+  BeforeInstall:
+    - location: scripts/generate_requirements.sh
+      timeout: 300
+      runas: ubuntu
+    - location: scripts/install_dependencies
+      timeout: 300
+      runas: ubuntu
+  AfterInstall:
+    - location: scripts/start_fastapi_app
+      timeout: 300
+      runas: ubuntu
+  ApplicationStop:
+    - location: scripts/stop_fastapi_app
+      timeout: 300
+      runas: ubuntu
