@@ -21,5 +21,3 @@ hooks:
     - location: scripts/stop_fastapi_app
       timeout: 300
       runas: ubuntu
-artifacts:
-  files: /home/ubuntu/flaskapplication/app/*
