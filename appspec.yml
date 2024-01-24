@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+files:
+  - source: /home/ubuntu/flaskapplication/app
+    destination: /home/ubuntu/flaskapplication/app
+  - source: /home/ubuntu/flaskapplication/requirements.txt
+    destination: /home/ubuntu/flaskapplication/
+hooks:
+  BeforeInstall:
+    - location: scripts/install_dependencies
+      timeout: 300
+      runas: ubuntu
+  AfterInstall:
+    - location: scripts/start_fastapi_app
+      timeout: 300
+      runas: ubuntu
+  ApplicationStop:
+    - location: scripts/stop_fastapi_app
+      timeout: 300
+      runas: ubuntu
