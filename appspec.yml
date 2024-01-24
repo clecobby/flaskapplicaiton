@@ -5,19 +5,23 @@ files:
     destination: /home/ubuntu/flaskapplication/app
   - source: /home/ubuntu/flaskapplication/requirements.txt
     destination: /home/ubuntu/flaskapplication/
+  - source: /home/ubuntu/flaskapplication/appspec.yml
+    destination: /home/ubuntu/flaskapplication/
+  - source: /home/ubuntu/flaskapplication/cert.pem
+    destination: /home/ubuntu/flaskapplication/
+  - source: /home/ubuntu/flaskapplication/key.pem
+    destination: /home/ubuntu/flaskapplication/
+  - source: /home/ubuntu/flaskapplication/scripts
+    destination: /home/ubuntu/flaskapplication/
 hooks:
   BeforeInstall:
-    - location: scripts/generate_requirements.sh
-      timeout: 300
-      runas: ubuntu
     - location: scripts/install_dependencies
       timeout: 300
       runas: ubuntu
-  AfterInstall:
-    - location: scripts/start_fastapi_app
+    - location: scripts/start_server
       timeout: 300
       runas: ubuntu
   ApplicationStop:
-    - location: scripts/stop_fastapi_app
+    - location: scripts/stop_server
       timeout: 300
       runas: ubuntu
