@@ -24,20 +24,25 @@ phases:
   install:
     runtime-versions:
       python: 3.10
+
   pre_build:
     commands:
-      - echo "Installing dependencies..."
-      - cd /home/ubuntu/flaskapplication/
+      - echo "Installing dependencies and generating SSL certificates..."
+      - pwd
+      - ls -al /home/ubuntu/
+      - ls -al /codebuild/output/src1839191887/src/
+      - cd /codebuild/output/src1839191887/src/home/ubuntu/flaskapplication/
       - pip3 install -r requirements.txt
       - sudo apt-get update
       - sudo apt-get install -y openssl
-      - echo "Generating SSL certificates..."
       - openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
+
   build:
     commands:
       - echo "Building FastAPI application..."
-      - cd /home/ubuntu/flaskapplication/app
+      - cd /codebuild/output/src1839191887/src/home/ubuntu/flaskapplication/app
       - uvicorn app:app --host 0.0.0.0 --port 5000 --ssl-keyfile key.pem --ssl-certfile cert.pem
+
   post_build:
     commands:
       - echo "Stopping FastAPI application..."
